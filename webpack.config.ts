@@ -1,6 +1,6 @@
 const path = require('path');
 
-module.exports = {
+const umdOptions = {
     entry: './src/js/browser/index.ts',
     module: {
         rules: [
@@ -11,15 +11,34 @@ module.exports = {
             },
         ],
     },
-    node: {Buffer: false},
     target: "web",
     resolve: {
         extensions: ['.ts', '.js'],
     },
     output: {
-        filename: 'index.js',
         path: path.resolve(__dirname, 'lib/browser/'),
-        library: 'spellchecker-wasm',
-        libraryTarget: 'umd'
+        filename: 'index.js',
+        library: {
+            name: 'spellchecker-wasm',
+            type: 'umd',
+        },
+    },
+    mode: 'production',
+};
+
+const esmOptions = {
+    ...umdOptions,
+    target: 'es2020',
+    output: {
+        ...umdOptions.output,
+        filename: 'index.mjs',
+        library: {
+            type: 'module',
+        },
+    },
+    experiments: {
+        outputModule: true,
     },
 };
+
+module.exports = [umdOptions, esmOptions];
